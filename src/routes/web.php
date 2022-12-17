@@ -20,4 +20,5 @@ $router->get('/', function () use ($router) {
 $router->group(['prefix' => 'api'], function() use ($router){
     $router->get('/user', ['uses' => 'UserController@index']);
     $router->get('/product', ['uses' => 'ProductController@index']);
+    $router->get('/order', ['uses' => 'OrderController@index']);
 });
