@@ -1,0 +1,30 @@
+@BaseUrL= http://127.0.0.1/api
+@cType = 'application/json'
+
+
+### GET ALL DATA
+GET {{BaseUrL}}/user
+
+### INSERT DATA
+POST {{BaseUrL}}/user
+Content-Type: {{cType}}
+
+{
+    "username": "client",
+    "password": "password"
+}
+
+### SHOW DATA DETAIL
+GET {{BaseUrL}}/user/1
+
+### UPDATE DATA
+PUT {{BaseUrL}}/user/3
+Content-Type: {{cType}}
+
+{
+    "username": "client3",
+    "password": "password3"
+}
+
+### DELETE DATA
+DELETE {{BaseUrL}}/user/1

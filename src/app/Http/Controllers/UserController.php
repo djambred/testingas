@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Response;
 use Carbon\Carbon;
 
 class UserController extends Controller
@@ -17,8 +18,8 @@ class UserController extends Controller
     public function index()
     {
         //
-        $test = DB::connection('mysql')->table('users')->get();
-        return response()->json($test);
+        $query = DB::connection('mysql')->table('users')->get();
+        return response()->json($query, 200);
     }
 
     /**
@@ -26,9 +27,20 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
         //
+        $timestamp = \Carbon\Carbon::now()->toDateTimeString();
+        $this->validate($request, [
+            'username' => 'required',
+            'password' => 'required',
+        ]);
+
+        $request['created_at'] = $timestamp;
+        $request['updated_at'] = $timestamp;
+
+        $query = DB::connection('mysql')->table('users')->insert($request->all());
+        return response()->json('Berhasil ditambahkan', 200);
     }
 
     /**
@@ -48,9 +60,15 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function show($id)
     {
         //
+        $query = DB::connection('mysql')->table('users')->find($id);
+        if ($query == NULL){
+            return response()->json('Data tidak ditemukan', 404);
+        } else {
+            return response()->json($query, 200);
+        }
     }
 
     /**
@@ -59,9 +77,11 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user)
+    public function edit($id)
     {
         //
+        $query = DB::connection('mysql')->table('users')->where('id', $id)->get();
+        return response()->json(' EDIT $query', 200);
     }
 
     /**
@@ -71,9 +91,18 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, $id)
     {
-        //
+        $query = DB::connection('mysql')->table('users')->find($id);
+        if ($query == NULL){
+            return response()->json('Data tidak ditemukan', 404);
+        } else {
+            $timestamp = \Carbon\Carbon::now()->toDateTimeString();
+            $request['updated_at'] = $timestamp;
+            $query = DB::connection('mysql')->table('users')->where('id', $id)->update($request->all());
+            return response()->json('Berhasil Update Data', 200);
+        }
+        
     }
 
     /**
@@ -82,8 +111,17 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
         //
+        $query = DB::connection('mysql')->table('users')->find($id);
+        if ($query == NULL){
+            return response()->json('Data tidak ditemukan', 404);
+        } else {
+            $result = DB::connection('mysql')->table('users');
+            $result->find($id);
+            $result->delete($id);
+            return response()->json('Data Berhasil di Hapus!', 200);
+        }
     }
 }
